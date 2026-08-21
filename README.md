@@ -1,33 +1,45 @@
 # Sistema de clases universitarias
 
-Proyecto final de Java Basics para practicar Programación Orientada a Objetos (POO).
+Aplicación de consola para administrar profesores, estudiantes y clases universitarias mediante programación orientada a objetos.
 
-## Estado
+## Funcionalidades
 
-Fase 1: estructura Maven y ejecución mínima del proyecto.
+- Registrar profesores de tiempo completo y medio tiempo.
+- Calcular el salario según el tipo de contrato.
+- Registrar estudiantes y clases universitarias.
+- Asociar profesores y estudiantes a las clases.
+- Consultar las clases en las que participa un estudiante.
+
+## Reglas de salario
+
+- Tiempo completo: `salarioBase * (1 + 0.10 * aniosDeExperiencia)`.
+- Medio tiempo: `salarioBase * horasActivasPorSemana`.
 
 ## Tecnologías
 
 - Java 21
 - Maven Wrapper
 - IntelliJ IDEA
-- Datos en memoria
+- Persistencia en memoria
 
-## Ejecutar
+## Requisitos
 
-En Windows:
+- JDK 21 configurado en `JAVA_HOME`.
+- Git para el control de versiones.
+
+## Ejecución
+
+Desde Windows PowerShell:
 
 ```powershell
 .\mvnw.cmd clean test
 ```
 
-La aplicación se ejecutará desde IntelliJ mientras construimos el menú de consola.
+La clase de entrada es `org.universidad.app.Main`.
 
-## Estructura prevista
+## Organización del código
 
 - `app`: punto de entrada de la aplicación.
-- `model`: entidades y reglas propias de los datos.
+- `model`: entidades y reglas del dominio.
 - `service`: operaciones del sistema.
-- `ui`: lectura y presentación por consola.
-
-El proyecto se desarrollará en commits pequeños: estructura, modelo, servicios, menú, pruebas y documentación.
+- `ui`: lectura de datos y presentación por consola.
