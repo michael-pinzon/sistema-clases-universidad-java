@@ -13,8 +13,8 @@ public final class ClaseUniversitaria {
     private final List<Estudiante> estudiantes;
 
     public ClaseUniversitaria(String nombre, String aulaAsignada, Profesor profesor) {
-        this.nombre = validarTexto(nombre, "El nombre de la clase es obligatorio.");
-        this.aulaAsignada = validarTexto(aulaAsignada, "El aula asignada es obligatoria.");
+        this.nombre = validarTextoConLetras(nombre, "El nombre de la clase es obligatorio.");
+        this.aulaAsignada = validarTextoConLetras(aulaAsignada, "El aula asignada es obligatoria.");
         this.profesor = Objects.requireNonNull(profesor, "La clase debe tener un profesor.");
         this.estudiantes = new ArrayList<>();
     }
@@ -47,6 +47,14 @@ public final class ClaseUniversitaria {
         String valorNormalizado = valor.trim();
         if (valorNormalizado.isEmpty()) {
             throw new IllegalArgumentException(mensaje);
+        }
+        return valorNormalizado;
+    }
+
+    private static String validarTextoConLetras(String valor, String mensaje) {
+        String valorNormalizado = validarTexto(valor, mensaje);
+        if (valorNormalizado.chars().noneMatch(Character::isLetter)) {
+            throw new IllegalArgumentException("El valor debe contener al menos una letra.");
         }
         return valorNormalizado;
     }
