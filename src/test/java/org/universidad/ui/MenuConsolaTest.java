@@ -66,4 +66,24 @@ class MenuConsolaTest {
         assertEquals("E-505", servicio.getUniversidad().getClases().get(4).getAulaAsignada());
         assertEquals(2, servicio.getUniversidad().getClases().get(4).getEstudiantes().size());
     }
+
+    @Test
+    void consultaLasClasesSeleccionandoUnEstudiantePorNumero() {
+        ByteArrayOutputStream contenido = new ByteArrayOutputStream();
+        UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
+        MenuConsola menu = new MenuConsola(
+                servicio,
+                new Scanner("5\n3\n6\n"),
+                new PrintStream(contenido, true, StandardCharsets.UTF_8));
+
+        menu.ejecutar();
+
+        String salida = contenido.toString(StandardCharsets.UTF_8);
+        assertTrue(salida.contains("Estudiantes disponibles:"));
+        assertFalse(salida.contains("ID del estudiante:"));
+        assertTrue(salida.contains("Clases de Valentina Gómez (ID: 1003):"));
+        assertTrue(salida.contains("Programación I"));
+        assertTrue(salida.contains("Bases de Datos"));
+        assertTrue(salida.contains("Inglés Técnico"));
+    }
 }

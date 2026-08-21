@@ -204,11 +204,15 @@ public final class MenuConsola {
     private void mostrarClasesDeEstudiante() {
         salida.println();
         salida.println("--- CONSULTA POR ESTUDIANTE ---");
-        int id = leerEntero("ID del estudiante: ");
+        Estudiante estudiante = seleccionarEstudiante();
+
+        if (estudiante == null) {
+            return;
+        }
 
         try {
-            List<ClaseUniversitaria> clases = servicio.obtenerClasesDeEstudiante(id);
-            salida.println("Clases del estudiante:");
+            List<ClaseUniversitaria> clases = servicio.obtenerClasesDeEstudiante(estudiante.getId());
+            salida.printf("Clases de %s (ID: %d):%n", estudiante.getNombre(), estudiante.getId());
             for (ClaseUniversitaria clase : clases) {
                 salida.printf("- %s | Aula: %s | Profesor: %s%n",
                         clase.getNombre(),
@@ -220,6 +224,33 @@ public final class MenuConsola {
             }
         } catch (IllegalArgumentException excepcion) {
             salida.println("No se pudo realizar la consulta: " + excepcion.getMessage());
+        }
+    }
+
+    private Estudiante seleccionarEstudiante() {
+        List<Estudiante> estudiantes = servicio.getUniversidad().getEstudiantes();
+        salida.println("Estudiantes disponibles:");
+
+        if (estudiantes.isEmpty()) {
+            salida.println("No hay estudiantes registrados.");
+            return null;
+        }
+
+        for (int indice = 0; indice < estudiantes.size(); indice++) {
+            Estudiante estudiante = estudiantes.get(indice);
+            salida.printf("%d. %s | ID: %d%n", indice + 1, estudiante.getNombre(), estudiante.getId());
+        }
+        salida.println("0. Cancelar");
+
+        while (true) {
+            int seleccion = leerEntero("Seleccione un estudiante: ");
+            if (seleccion == 0) {
+                return null;
+            }
+            if (seleccion >= 1 && seleccion <= estudiantes.size()) {
+                return estudiantes.get(seleccion - 1);
+            }
+            salida.println("Selección no válida. Elija uno de los estudiantes listados.");
         }
     }
 
