@@ -92,10 +92,14 @@ La aplicación mostrará el menú principal y esperará la selección de una opc
 ## Validaciones de registro
 
 - El ID de un nuevo estudiante se genera automáticamente a partir del mayor ID existente.
-- El nombre del estudiante y de la clase debe contener al menos una letra.
+- Los nombres de estudiantes y profesores solo aceptan letras, incluidos caracteres acentuados,
+  y deben incluir al menos un nombre y un apellido.
+- El nombre de la clase solo acepta letras y espacios.
 - La edad debe ser un número entero entre 15 y 120 años.
 - El aula se selecciona desde una lista de aulas disponibles; no se solicita manualmente.
-- Al registrar una clase, se pueden seleccionar varios estudiantes y se utiliza `0` para finalizar.
+- Toda clase debe tener al menos un estudiante registrado.
+- Al registrar una clase, se pueden seleccionar varios estudiantes y se utiliza `0` para finalizar;
+  si no se selecciona ninguno, la clase no se registra.
 - Las listas de profesores, clases y estudiantes presentan sus columnas alineadas para facilitar la lectura.
 
 ## Pruebas

@@ -37,13 +37,13 @@ class MenuConsolaTest {
         UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
         MenuConsola menu = new MenuConsola(
                 servicio,
-                new Scanner("3\n123\nNuevo Estudiante\ntexto\n14\n15\n1\n6\n"),
+                new Scanner("3\n123\nAna2 Pérez\nAna-Pérez\nNuevo Estudiante\ntexto\n14\n15\n1\n6\n"),
                 new PrintStream(contenido, true, StandardCharsets.UTF_8));
 
         menu.ejecutar();
 
         String salida = contenido.toString(StandardCharsets.UTF_8);
-        assertTrue(salida.contains("debe contener al menos una letra."));
+        assertTrue(salida.contains("solo letras e incluya al menos un nombre y un apellido."));
         assertTrue(salida.contains("entero válido"));
         assertTrue(salida.contains("entre 15 y 120 años."));
         assertTrue(salida.contains("ID asignado: 1007"));
@@ -63,7 +63,7 @@ class MenuConsolaTest {
         menu.ejecutar();
 
         String salida = contenido.toString(StandardCharsets.UTF_8);
-        assertTrue(salida.contains("debe contener al menos una letra."));
+        assertTrue(salida.contains("solo letras y espacios."));
         assertTrue(salida.contains("Elija una de las aulas disponibles."));
         assertTrue(salida.contains("Aulas disponibles:"));
         assertTrue(salida.contains("Seleccionar uno no cierra este menú"));
@@ -71,6 +71,22 @@ class MenuConsolaTest {
         assertEquals(5, servicio.getUniversidad().getClases().size());
         assertEquals("E-505", servicio.getUniversidad().getClases().get(4).getAulaAsignada());
         assertEquals(2, servicio.getUniversidad().getClases().get(4).getEstudiantes().size());
+    }
+
+    @Test
+    void noRegistraUnaClaseSinEstudiantes() {
+        ByteArrayOutputStream contenido = new ByteArrayOutputStream();
+        UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
+        MenuConsola menu = new MenuConsola(
+                servicio,
+                new Scanner("4\nNueva Clase\n1\n1\n0\n6\n"),
+                new PrintStream(contenido, true, StandardCharsets.UTF_8));
+
+        menu.ejecutar();
+
+        String salida = contenido.toString(StandardCharsets.UTF_8);
+        assertTrue(salida.contains("Debe seleccionar al menos un estudiante."));
+        assertEquals(4, servicio.getUniversidad().getClases().size());
     }
 
     @Test
