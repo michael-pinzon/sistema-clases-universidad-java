@@ -154,9 +154,8 @@ public final class MenuConsola {
     private void crearEstudiante() {
         salida.println();
         salida.println("--- REGISTRAR ESTUDIANTE ---");
-        String nombre = leerTexto("Nombre: ");
-        int id = leerEntero("ID: ");
-        int edad = leerEntero("Edad: ");
+        String nombre = leerNombre("Nombre: ");
+        int edad = leerEdad("Edad: ");
         ClaseUniversitaria clase = seleccionarClase("Seleccione la clase de inscripción:");
 
         if (clase == null) {
@@ -164,10 +163,10 @@ public final class MenuConsola {
         }
 
         try {
-            Estudiante estudiante = new Estudiante(nombre, id, edad);
-            servicio.registrarEstudiante(estudiante);
+            Estudiante estudiante = servicio.registrarEstudiante(nombre, edad);
             servicio.inscribirEstudianteEnClase(estudiante, clase.getNombre());
-            salida.println("Estudiante registrado y asociado correctamente.");
+            salida.printf("Estudiante registrado y asociado correctamente. ID asignado: %d.%n",
+                    estudiante.getId());
         } catch (IllegalArgumentException excepcion) {
             salida.println("No se pudo registrar el estudiante: " + excepcion.getMessage());
         }
@@ -306,6 +305,26 @@ public final class MenuConsola {
                 return valor;
             }
             salida.println("El valor es obligatorio.");
+        }
+    }
+
+    private String leerNombre(String mensaje) {
+        while (true) {
+            String valor = leerTexto(mensaje);
+            if (valor.chars().anyMatch(Character::isLetter)) {
+                return valor;
+            }
+            salida.println("Ingrese un nombre válido; debe contener al menos una letra.");
+        }
+    }
+
+    private int leerEdad(String mensaje) {
+        while (true) {
+            int edad = leerEntero(mensaje);
+            if (edad >= 15 && edad <= 120) {
+                return edad;
+            }
+            salida.println("La edad debe ser un número entero entre 15 y 120 años.");
         }
     }
 

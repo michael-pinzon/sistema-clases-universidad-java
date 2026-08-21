@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public final class UniversidadService {
 
+    private static final int PRIMER_ID_ESTUDIANTE = 1001;
+
     private final Universidad universidad;
 
     public UniversidadService(Universidad universidad) {
@@ -35,6 +37,19 @@ public final class UniversidadService {
             throw new IllegalArgumentException("Ya existe un estudiante con ese ID.");
         }
         universidad.agregarEstudiante(estudiante);
+    }
+
+    public Estudiante registrarEstudiante(String nombre, int edad) {
+        Estudiante estudiante = new Estudiante(nombre, obtenerSiguienteIdEstudiante(), edad);
+        registrarEstudiante(estudiante);
+        return estudiante;
+    }
+
+    public int obtenerSiguienteIdEstudiante() {
+        return universidad.getEstudiantes().stream()
+                .mapToInt(Estudiante::getId)
+                .max()
+                .orElse(PRIMER_ID_ESTUDIANTE - 1) + 1;
     }
 
     public void registrarClase(ClaseUniversitaria clase) {

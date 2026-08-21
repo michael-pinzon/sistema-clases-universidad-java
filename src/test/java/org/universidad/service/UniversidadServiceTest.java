@@ -43,6 +43,17 @@ class UniversidadServiceTest {
     }
 
     @Test
+    void generaElSiguienteIdParaUnNuevoEstudiante() {
+        Universidad universidad = DatosIniciales.crearUniversidadInicial();
+        UniversidadService servicio = new UniversidadService(universidad);
+
+        Estudiante estudiante = servicio.registrarEstudiante("Nuevo Estudiante", 15);
+
+        assertEquals(1007, estudiante.getId());
+        assertSame(estudiante, servicio.buscarEstudiantePorId(1007).orElseThrow());
+    }
+
+    @Test
     void creaUnaClaseConProfesorYEstudiantesRegistrados() {
         Universidad universidad = DatosIniciales.crearUniversidadInicial();
         UniversidadService servicio = new UniversidadService(universidad);
