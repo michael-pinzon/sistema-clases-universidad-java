@@ -86,8 +86,17 @@ La aplicación mostrará el menú principal y esperará la selección de una opc
 2. Listar clases y consultar el detalle de una clase.
 3. Registrar un estudiante y asociarlo a una clase existente.
 4. Registrar una clase con un profesor y estudiantes existentes.
-5. Consultar las clases asociadas a un estudiante mediante su ID.
+5. Consultar las clases asociadas a un estudiante seleccionándolo de una lista numerada.
 6. Salir de la aplicación.
+
+## Validaciones de registro
+
+- El ID de un nuevo estudiante se genera automáticamente a partir del mayor ID existente.
+- El nombre del estudiante y de la clase debe contener al menos una letra.
+- La edad debe ser un número entero entre 15 y 120 años.
+- El aula se selecciona desde una lista de aulas disponibles; no se solicita manualmente.
+- Al registrar una clase, se pueden seleccionar varios estudiantes y se utiliza `0` para finalizar.
+- Las listas de profesores, clases y estudiantes presentan sus columnas alineadas para facilitar la lectura.
 
 ## Pruebas
 

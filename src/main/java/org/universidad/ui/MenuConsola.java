@@ -72,12 +72,20 @@ public final class MenuConsola {
             return;
         }
 
+        int anchoNombre = obtenerAnchoMaximo(profesores.stream().map(Profesor::getNombre).toList());
+        int anchoTipo = obtenerAnchoMaximo(profesores.stream().map(Profesor::getTipoContrato).toList());
+        int anchoSalarioBase = obtenerAnchoMaximo(profesores.stream()
+                .map(profesor -> formatearMonto(profesor.getSalarioBase()))
+                .toList());
+        int anchoSalarioCalculado = obtenerAnchoMaximo(profesores.stream()
+                .map(profesor -> formatearMonto(profesor.calcularSalario()))
+                .toList());
+
         for (int indice = 0; indice < profesores.size(); indice++) {
             Profesor profesor = profesores.get(indice);
-            salida.printf(Locale.US, "%n%d. %s%n", indice + 1, profesor.getNombre());
-            salida.printf("   Tipo de contrato: %s%n", profesor.getTipoContrato());
-            salida.printf(Locale.US, "   Salario base: %.2f%n", profesor.getSalarioBase());
-            salida.printf(Locale.US, "   Salario calculado: %.2f%n", profesor.calcularSalario());
+            salida.printf("%n%d. %s%n", indice + 1,
+                    formatearProfesor(profesor, anchoNombre, anchoTipo,
+                            anchoSalarioBase, anchoSalarioCalculado));
 
             if (profesor instanceof ProfesorTiempoCompleto tiempoCompleto) {
                 salida.printf("   Años de experiencia: %d%n", tiempoCompleto.getAniosDeExperiencia());
@@ -97,14 +105,16 @@ public final class MenuConsola {
             return;
         }
 
+        int anchoNombre = obtenerAnchoMaximo(clases.stream().map(ClaseUniversitaria::getNombre).toList());
+        int anchoAula = obtenerAnchoMaximo(clases.stream().map(ClaseUniversitaria::getAulaAsignada).toList());
+        int anchoProfesor = obtenerAnchoMaximo(clases.stream()
+                .map(clase -> clase.getProfesor().getNombre())
+                .toList());
+
         for (int indice = 0; indice < clases.size(); indice++) {
             ClaseUniversitaria clase = clases.get(indice);
-            salida.printf(
-                    "%d. %s | Aula: %s | Profesor: %s | Estudiantes: %d%n",
-                    indice + 1,
-                    clase.getNombre(),
-                    clase.getAulaAsignada(),
-                    clase.getProfesor().getNombre(),
+            salida.printf("%d. %s | Estudiantes: %d%n",
+                    indice + 1, formatearClase(clase, anchoNombre, anchoAula, anchoProfesor),
                     clase.getEstudiantes().size());
         }
 
@@ -135,12 +145,12 @@ public final class MenuConsola {
             return;
         }
 
-        for (Estudiante estudiante : clase.getEstudiantes()) {
-            salida.printf(
-                    "   - %s | ID: %d | Edad: %d%n",
-                    estudiante.getNombre(),
-                    estudiante.getId(),
-                    estudiante.getEdad());
+        List<Estudiante> estudiantes = clase.getEstudiantes();
+        int anchoNombre = obtenerAnchoMaximo(estudiantes.stream().map(Estudiante::getNombre).toList());
+        for (Estudiante estudiante : estudiantes) {
+            salida.printf("   - %s | ID: %d | Edad: %d%n",
+                    ajustarColumna(estudiante.getNombre(), anchoNombre),
+                    estudiante.getId(), estudiante.getEdad());
         }
     }
 
@@ -213,11 +223,13 @@ public final class MenuConsola {
         try {
             List<ClaseUniversitaria> clases = servicio.obtenerClasesDeEstudiante(estudiante.getId());
             salida.printf("Clases de %s (ID: %d):%n", estudiante.getNombre(), estudiante.getId());
+            int anchoNombre = obtenerAnchoMaximo(clases.stream().map(ClaseUniversitaria::getNombre).toList());
+            int anchoAula = obtenerAnchoMaximo(clases.stream().map(ClaseUniversitaria::getAulaAsignada).toList());
+            int anchoProfesor = obtenerAnchoMaximo(clases.stream()
+                    .map(clase -> clase.getProfesor().getNombre())
+                    .toList());
             for (ClaseUniversitaria clase : clases) {
-                salida.printf("- %s | Aula: %s | Profesor: %s%n",
-                        clase.getNombre(),
-                        clase.getAulaAsignada(),
-                        clase.getProfesor().getNombre());
+                salida.printf("- %s%n", formatearClase(clase, anchoNombre, anchoAula, anchoProfesor));
             }
             if (clases.isEmpty()) {
                 salida.println("El estudiante no está asociado a ninguna clase.");
@@ -236,9 +248,11 @@ public final class MenuConsola {
             return null;
         }
 
+        int anchoNombre = obtenerAnchoMaximo(estudiantes.stream().map(Estudiante::getNombre).toList());
         for (int indice = 0; indice < estudiantes.size(); indice++) {
             Estudiante estudiante = estudiantes.get(indice);
-            salida.printf("%d. %s | ID: %d%n", indice + 1, estudiante.getNombre(), estudiante.getId());
+            salida.printf("%d. %s | ID: %d%n", indice + 1,
+                    ajustarColumna(estudiante.getNombre(), anchoNombre), estudiante.getId());
         }
         salida.println("0. Cancelar");
 
@@ -257,11 +271,13 @@ public final class MenuConsola {
     private Profesor seleccionarProfesor() {
         List<Profesor> profesores = servicio.getUniversidad().getProfesores();
         salida.println("Profesores disponibles:");
+        int anchoNombre = obtenerAnchoMaximo(profesores.stream().map(Profesor::getNombre).toList());
+        int anchoTipo = obtenerAnchoMaximo(profesores.stream().map(Profesor::getTipoContrato).toList());
         for (int indice = 0; indice < profesores.size(); indice++) {
-            salida.printf("%d. %s (%s)%n",
+            salida.printf("%d. %s | Tipo: %s%n",
                     indice + 1,
-                    profesores.get(indice).getNombre(),
-                    profesores.get(indice).getTipoContrato());
+                    ajustarColumna(profesores.get(indice).getNombre(), anchoNombre),
+                    ajustarColumna(profesores.get(indice).getTipoContrato(), anchoTipo));
         }
         salida.println("0. Cancelar");
 
@@ -279,11 +295,13 @@ public final class MenuConsola {
     private ClaseUniversitaria seleccionarClase(String mensaje) {
         List<ClaseUniversitaria> clases = servicio.getUniversidad().getClases();
         salida.println(mensaje);
+        int anchoNombre = obtenerAnchoMaximo(clases.stream().map(ClaseUniversitaria::getNombre).toList());
+        int anchoAula = obtenerAnchoMaximo(clases.stream().map(ClaseUniversitaria::getAulaAsignada).toList());
         for (int indice = 0; indice < clases.size(); indice++) {
-            salida.printf("%d. %s | Aula: %s%n",
-                    indice + 1,
-                    clases.get(indice).getNombre(),
-                    clases.get(indice).getAulaAsignada());
+            ClaseUniversitaria clase = clases.get(indice);
+            salida.printf("%d. %s | Aula: %s%n", indice + 1,
+                    ajustarColumna(clase.getNombre(), anchoNombre),
+                    ajustarColumna(clase.getAulaAsignada(), anchoAula));
         }
         salida.println("0. Cancelar");
 
@@ -303,9 +321,12 @@ public final class MenuConsola {
         List<Estudiante> seleccionados = new ArrayList<>();
 
         salida.println("Estudiantes disponibles:");
+        int anchoNombre = obtenerAnchoMaximo(
+                estudiantesDisponibles.stream().map(Estudiante::getNombre).toList());
         for (int indice = 0; indice < estudiantesDisponibles.size(); indice++) {
             Estudiante estudiante = estudiantesDisponibles.get(indice);
-            salida.printf("%d. %s | ID: %d%n", indice + 1, estudiante.getNombre(), estudiante.getId());
+            salida.printf("%d. %s | ID: %d%n", indice + 1,
+                    ajustarColumna(estudiante.getNombre(), anchoNombre), estudiante.getId());
         }
         salida.println("Puede elegir varios estudiantes. Seleccionar uno no cierra este menú; use 0 cuando termine.");
         salida.println("0. Finalizar selección");
@@ -358,6 +379,46 @@ public final class MenuConsola {
             }
             salida.println("Selección no válida. Elija una de las aulas disponibles.");
         }
+    }
+
+    private String formatearProfesor(
+            Profesor profesor,
+            int anchoNombre,
+            int anchoTipo,
+            int anchoSalarioBase,
+            int anchoSalarioCalculado) {
+        return String.format(
+                Locale.ROOT,
+                "%s | Tipo: %s | Salario base: %s | Salario calculado: %s",
+                ajustarColumna(profesor.getNombre(), anchoNombre),
+                ajustarColumna(profesor.getTipoContrato(), anchoTipo),
+                ajustarColumna(formatearMonto(profesor.getSalarioBase()), anchoSalarioBase),
+                ajustarColumna(formatearMonto(profesor.calcularSalario()), anchoSalarioCalculado));
+    }
+
+    private String formatearClase(
+            ClaseUniversitaria clase,
+            int anchoNombre,
+            int anchoAula,
+            int anchoProfesor) {
+        return String.format(
+                Locale.ROOT,
+                "%s | Aula: %s | Profesor: %s",
+                ajustarColumna(clase.getNombre(), anchoNombre),
+                ajustarColumna(clase.getAulaAsignada(), anchoAula),
+                ajustarColumna(clase.getProfesor().getNombre(), anchoProfesor));
+    }
+
+    private int obtenerAnchoMaximo(List<String> valores) {
+        return valores.stream().mapToInt(String::length).max().orElse(0);
+    }
+
+    private String ajustarColumna(String valor, int ancho) {
+        return String.format(Locale.ROOT, "%-" + ancho + "s", valor);
+    }
+
+    private String formatearMonto(double monto) {
+        return String.format(Locale.US, "%.2f", monto);
     }
 
     private String leerTexto(String mensaje) {
