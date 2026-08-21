@@ -175,8 +175,13 @@ public final class MenuConsola {
     private void crearClase() {
         salida.println();
         salida.println("--- REGISTRAR CLASE ---");
-        String nombre = leerTexto("Nombre de la clase: ");
-        String aula = leerTexto("Aula asignada: ");
+        String nombre = leerNombre("Nombre de la clase: ");
+        String aula = seleccionarAula();
+
+        if (aula == null) {
+            return;
+        }
+
         Profesor profesor = seleccionarProfesor();
 
         if (profesor == null) {
@@ -271,6 +276,7 @@ public final class MenuConsola {
             Estudiante estudiante = estudiantesDisponibles.get(indice);
             salida.printf("%d. %s | ID: %d%n", indice + 1, estudiante.getNombre(), estudiante.getId());
         }
+        salida.println("Puede elegir varios estudiantes. Seleccionar uno no cierra este menú; use 0 cuando termine.");
         salida.println("0. Finalizar selección");
 
         while (true) {
@@ -292,8 +298,34 @@ public final class MenuConsola {
                 salida.println("El estudiante ya fue seleccionado.");
             } else {
                 seleccionados.add(estudiante);
-                salida.println("Estudiante agregado.");
+                salida.println("Estudiante agregado. Puede elegir otro o 0 para finalizar.");
             }
+        }
+    }
+
+    private String seleccionarAula() {
+        List<String> aulas = servicio.obtenerAulasDisponibles();
+        salida.println("Aulas disponibles:");
+
+        if (aulas.isEmpty()) {
+            salida.println("No hay aulas disponibles para una nueva clase.");
+            return null;
+        }
+
+        for (int indice = 0; indice < aulas.size(); indice++) {
+            salida.printf("%d. %s%n", indice + 1, aulas.get(indice));
+        }
+        salida.println("0. Cancelar");
+
+        while (true) {
+            int seleccion = leerEntero("Seleccione un aula: ");
+            if (seleccion == 0) {
+                return null;
+            }
+            if (seleccion >= 1 && seleccion <= aulas.size()) {
+                return aulas.get(seleccion - 1);
+            }
+            salida.println("Selección no válida. Elija una de las aulas disponibles.");
         }
     }
 

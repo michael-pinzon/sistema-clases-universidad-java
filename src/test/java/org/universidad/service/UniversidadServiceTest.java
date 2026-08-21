@@ -73,6 +73,24 @@ class UniversidadServiceTest {
     }
 
     @Test
+    void muestraSoloLasAulasQueNoEstanOcupadas() {
+        UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
+
+        assertEquals(List.of("E-505", "F-606", "G-707", "H-808"), servicio.obtenerAulasDisponibles());
+    }
+
+    @Test
+    void rechazaUnaClaseConAulaOcupada() {
+        Universidad universidad = DatosIniciales.crearUniversidadInicial();
+        UniversidadService servicio = new UniversidadService(universidad);
+        Profesor profesor = servicio.buscarProfesorPorNombre("Ana Martínez").orElseThrow();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> servicio.crearClase("Nueva Clase", "A-101", profesor, List.of()));
+    }
+
+    @Test
     void evitaMatricularDosVecesAlMismoEstudianteEnUnaClase() {
         Universidad universidad = DatosIniciales.crearUniversidadInicial();
         UniversidadService servicio = new UniversidadService(universidad);

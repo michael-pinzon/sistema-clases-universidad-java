@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public final class UniversidadService {
 
+    private static final List<String> AULAS_DISPONIBLES = List.of(
+            "A-101", "B-202", "C-303", "D-404", "E-505", "F-606", "G-707", "H-808");
     private static final int PRIMER_ID_ESTUDIANTE = 1001;
 
     private final Universidad universidad;
@@ -57,6 +59,9 @@ public final class UniversidadService {
         if (buscarClasePorNombre(clase.getNombre()).isPresent()) {
             throw new IllegalArgumentException("Ya existe una clase con ese nombre.");
         }
+        if (buscarClasePorAula(clase.getAulaAsignada()).isPresent()) {
+            throw new IllegalArgumentException("El aula seleccionada ya está ocupada.");
+        }
         universidad.agregarClase(clase);
     }
 
@@ -78,6 +83,19 @@ public final class UniversidadService {
         return universidad.getClases().stream()
                 .filter(clase -> clase.getNombre().equalsIgnoreCase(nombreNormalizado))
                 .findFirst();
+    }
+
+    public Optional<ClaseUniversitaria> buscarClasePorAula(String aula) {
+        String aulaNormalizada = normalizarTexto(aula, "El aula asignada es obligatoria.");
+        return universidad.getClases().stream()
+                .filter(clase -> clase.getAulaAsignada().equalsIgnoreCase(aulaNormalizada))
+                .findFirst();
+    }
+
+    public List<String> obtenerAulasDisponibles() {
+        return AULAS_DISPONIBLES.stream()
+                .filter(aula -> buscarClasePorAula(aula).isEmpty())
+                .toList();
     }
 
     public List<ClaseUniversitaria> obtenerClasesDeEstudiante(int id) {
