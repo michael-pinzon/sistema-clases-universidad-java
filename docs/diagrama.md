@@ -11,8 +11,11 @@ classDiagram
 
     class UniversidadService {
         +registrarProfesor()
-        +registrarEstudiante()
+        +registrarEstudiante(estudiante)
+        +registrarEstudiante(nombre, edad) Estudiante
+        +obtenerSiguienteIdEstudiante() int
         +registrarClase()
+        +obtenerAulasDisponibles() List~String~
         +obtenerClasesDeEstudiante()
         +inscribirEstudianteEnClase()
         +crearClase()

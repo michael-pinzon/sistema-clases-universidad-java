@@ -7,11 +7,12 @@ import org.universidad.service.UniversidadService;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Scanner;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class MenuConsolaTest {
 
@@ -36,12 +37,15 @@ class MenuConsolaTest {
         UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
         MenuConsola menu = new MenuConsola(
                 servicio,
-                new Scanner("3\nNuevo Estudiante\n15\n1\n6\n"),
+                new Scanner("3\n123\nNuevo Estudiante\ntexto\n14\n15\n1\n6\n"),
                 new PrintStream(contenido, true, StandardCharsets.UTF_8));
 
         menu.ejecutar();
 
         String salida = contenido.toString(StandardCharsets.UTF_8);
+        assertTrue(salida.contains("debe contener al menos una letra."));
+        assertTrue(salida.contains("entero válido"));
+        assertTrue(salida.contains("entre 15 y 120 años."));
         assertTrue(salida.contains("ID asignado: 1007"));
         assertFalse(salida.contains("ID:"));
         assertTrue(servicio.buscarEstudiantePorId(1007).isPresent());
@@ -53,12 +57,14 @@ class MenuConsolaTest {
         UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
         MenuConsola menu = new MenuConsola(
                 servicio,
-                new Scanner("4\nNueva Clase\n1\n1\n1\n2\n0\n6\n"),
+                new Scanner("4\n123\nNueva Clase\n9\n1\n1\n1\n2\n0\n6\n"),
                 new PrintStream(contenido, true, StandardCharsets.UTF_8));
 
         menu.ejecutar();
 
         String salida = contenido.toString(StandardCharsets.UTF_8);
+        assertTrue(salida.contains("debe contener al menos una letra."));
+        assertTrue(salida.contains("Elija una de las aulas disponibles."));
         assertTrue(salida.contains("Aulas disponibles:"));
         assertTrue(salida.contains("Seleccionar uno no cierra este menú"));
         assertTrue(salida.contains("Clase registrada correctamente."));
@@ -85,5 +91,54 @@ class MenuConsolaTest {
         assertTrue(salida.contains("Programación I"));
         assertTrue(salida.contains("Bases de Datos"));
         assertTrue(salida.contains("Inglés Técnico"));
+    }
+
+    @Test
+    void mantieneAlineadasLasColumnasDeProfesoresClasesYEstudiantes() {
+        ByteArrayOutputStream contenido = new ByteArrayOutputStream();
+        UniversidadService servicio = new UniversidadService(DatosIniciales.crearUniversidadInicial());
+        MenuConsola menu = new MenuConsola(
+                servicio,
+                new Scanner("1\n2\n0\n5\n1\n6\n"),
+                new PrintStream(contenido, true, StandardCharsets.UTF_8));
+
+        menu.ejecutar();
+
+        String salida = contenido.toString(StandardCharsets.UTF_8);
+        List<String> filasProfesores = salida.lines()
+                .filter(linea -> linea.matches("\\d+\\. .*\\| Tipo:.*"))
+                .toList();
+        List<String> filasClases = salida.lines()
+                .filter(linea -> linea.matches("\\d+\\. .*\\| Aula:.*"))
+                .toList();
+        List<String> filasEstudiantes = salida.lines()
+                .filter(linea -> linea.matches("\\d+\\. .*\\| ID:.*"))
+                .toList();
+
+        assertEquals(4, filasProfesores.size());
+        assertEquals(4, filasClases.size());
+        assertEquals(6, filasEstudiantes.size());
+        assertColumnasAlineadas(filasProfesores, 3);
+        assertColumnasAlineadas(filasClases, 3);
+        assertColumnasAlineadas(filasEstudiantes, 1);
+    }
+
+    private static void assertColumnasAlineadas(List<String> filas, int cantidadSeparadores) {
+        for (int separador = 1; separador <= cantidadSeparadores; separador++) {
+            int posicionEsperada = posicionDelSeparador(filas.get(0), separador);
+            for (String fila : filas) {
+                assertEquals(posicionEsperada, posicionDelSeparador(fila, separador));
+            }
+        }
+    }
+
+    private static int posicionDelSeparador(String fila, int numeroSeparador) {
+        int posicionInicial = 0;
+        int posicion = -1;
+        for (int indice = 0; indice < numeroSeparador; indice++) {
+            posicion = fila.indexOf('|', posicionInicial);
+            posicionInicial = posicion + 1;
+        }
+        return posicion;
     }
 }
