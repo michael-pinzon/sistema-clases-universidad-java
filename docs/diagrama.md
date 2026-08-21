@@ -18,7 +18,7 @@ classDiagram
         +obtenerAulasDisponibles() List~String~
         +obtenerClasesDeEstudiante()
         +inscribirEstudianteEnClase()
-        +crearClase()
+        +crearClase(nombre, aulaAsignada, profesor, estudiantes) ClaseUniversitaria
     }
 
     class DatosIniciales {
@@ -60,7 +60,15 @@ classDiagram
     class ClaseUniversitaria {
         -String nombre
         -String aulaAsignada
+        +ClaseUniversitaria(nombre, aulaAsignada, profesor, estudiantes)
         +agregarEstudiante()
+    }
+
+    class ValidadorNombre {
+        +validar(nombre, mensajeError) String$
+        +validarTextoSoloLetras(texto, mensajeError) String$
+        +esNombreCompletoValido(nombre) boolean$
+        +esTextoSoloLetras(texto) boolean$
     }
 
     Main --> DatosIniciales
@@ -72,8 +80,14 @@ classDiagram
     Universidad "1" o-- "*" Estudiante
     Universidad "1" o-- "*" ClaseUniversitaria
     ClaseUniversitaria "1" --> "1" Profesor
-    ClaseUniversitaria "1" o-- "*" Estudiante
+    ClaseUniversitaria "1" o-- "1..*" Estudiante
     Profesor <|-- ProfesorTiempoCompleto
     Profesor <|-- ProfesorMedioTiempo
     MenuConsola --> UniversidadService
+    Estudiante ..> ValidadorNombre
+    Profesor ..> ValidadorNombre
+    ClaseUniversitaria ..> ValidadorNombre
+    MenuConsola ..> ValidadorNombre
 ```
+
+La multiplicidad `1..*` indica que una clase debe tener al menos un estudiante.

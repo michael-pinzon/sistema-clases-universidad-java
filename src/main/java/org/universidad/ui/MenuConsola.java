@@ -5,6 +5,7 @@ import org.universidad.model.Estudiante;
 import org.universidad.model.Profesor;
 import org.universidad.model.ProfesorMedioTiempo;
 import org.universidad.model.ProfesorTiempoCompleto;
+import org.universidad.model.ValidadorNombre;
 import org.universidad.service.UniversidadService;
 
 import java.io.PrintStream;
@@ -164,7 +165,7 @@ public final class MenuConsola {
     private void crearEstudiante() {
         salida.println();
         salida.println("--- REGISTRAR ESTUDIANTE ---");
-        String nombre = leerNombre("Nombre: ");
+        String nombre = leerNombrePersona("Nombre: ");
         int edad = leerEdad("Edad: ");
         ClaseUniversitaria clase = seleccionarClase("Seleccione la clase de inscripción:");
 
@@ -185,7 +186,7 @@ public final class MenuConsola {
     private void crearClase() {
         salida.println();
         salida.println("--- REGISTRAR CLASE ---");
-        String nombre = leerNombre("Nombre de la clase: ");
+        String nombre = leerNombreClase("Nombre de la clase: ");
         String aula = seleccionarAula();
 
         if (aula == null) {
@@ -432,13 +433,23 @@ public final class MenuConsola {
         }
     }
 
-    private String leerNombre(String mensaje) {
+    private String leerNombrePersona(String mensaje) {
         while (true) {
             String valor = leerTexto(mensaje);
-            if (valor.chars().anyMatch(Character::isLetter)) {
+            if (ValidadorNombre.esNombreCompletoValido(valor)) {
                 return valor;
             }
-            salida.println("Ingrese un nombre válido; debe contener al menos una letra.");
+            salida.println("Ingrese un nombre válido: use solo letras e incluya al menos un nombre y un apellido.");
+        }
+    }
+
+    private String leerNombreClase(String mensaje) {
+        while (true) {
+            String valor = leerTexto(mensaje);
+            if (ValidadorNombre.esTextoSoloLetras(valor)) {
+                return valor;
+            }
+            salida.println("El nombre de la clase debe contener solo letras y espacios.");
         }
     }
 

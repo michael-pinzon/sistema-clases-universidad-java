@@ -1,7 +1,5 @@
 package org.universidad.model;
 
-import java.util.Objects;
-
 public abstract class Profesor {
 
     private static int totalProfesores;
@@ -10,7 +8,9 @@ public abstract class Profesor {
     private final double salarioBase;
 
     protected Profesor(String nombre, double salarioBase) {
-        this.nombre = validarTexto(nombre, "El nombre del profesor es obligatorio.");
+        this.nombre = ValidadorNombre.validar(
+                nombre,
+                "El nombre del profesor debe contener solo letras y al menos un nombre y un apellido.");
         if (salarioBase <= 0) {
             throw new IllegalArgumentException("El salario base debe ser mayor que cero.");
         }
@@ -34,12 +34,4 @@ public abstract class Profesor {
 
     public abstract String getTipoContrato();
 
-    private static String validarTexto(String valor, String mensaje) {
-        Objects.requireNonNull(valor, mensaje);
-        String valorNormalizado = valor.trim();
-        if (valorNormalizado.isEmpty()) {
-            throw new IllegalArgumentException(mensaje);
-        }
-        return valorNormalizado;
-    }
 }

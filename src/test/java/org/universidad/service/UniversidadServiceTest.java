@@ -84,10 +84,24 @@ class UniversidadServiceTest {
         Universidad universidad = DatosIniciales.crearUniversidadInicial();
         UniversidadService servicio = new UniversidadService(universidad);
         Profesor profesor = servicio.buscarProfesorPorNombre("Ana Martínez").orElseThrow();
+        Estudiante estudiante = servicio.buscarEstudiantePorId(1001).orElseThrow();
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> servicio.crearClase("Nueva Clase", "A-101", profesor, List.of()));
+                () -> servicio.crearClase("Nueva Clase", "A-101", profesor, List.of(estudiante)));
+    }
+
+    @Test
+    void rechazaUnaClaseSinEstudiantes() {
+        Universidad universidad = DatosIniciales.crearUniversidadInicial();
+        UniversidadService servicio = new UniversidadService(universidad);
+        Profesor profesor = servicio.buscarProfesorPorNombre("Ana Martínez").orElseThrow();
+
+        IllegalArgumentException excepcion = assertThrows(
+                IllegalArgumentException.class,
+                () -> servicio.crearClase("Nueva Clase", "E-505", profesor, List.of()));
+
+        assertEquals("La clase debe tener al menos un estudiante.", excepcion.getMessage());
     }
 
     @Test

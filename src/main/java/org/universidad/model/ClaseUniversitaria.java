@@ -12,11 +12,22 @@ public final class ClaseUniversitaria {
     private final Profesor profesor;
     private final List<Estudiante> estudiantes;
 
-    public ClaseUniversitaria(String nombre, String aulaAsignada, Profesor profesor) {
-        this.nombre = validarTextoConLetras(nombre, "El nombre de la clase es obligatorio.");
+    public ClaseUniversitaria(
+            String nombre,
+            String aulaAsignada,
+            Profesor profesor,
+            List<Estudiante> estudiantes) {
+        this.nombre = ValidadorNombre.validarTextoSoloLetras(
+                nombre,
+                "El nombre de la clase debe contener solo letras y espacios.");
         this.aulaAsignada = validarTextoConLetras(aulaAsignada, "El aula asignada es obligatoria.");
         this.profesor = Objects.requireNonNull(profesor, "La clase debe tener un profesor.");
+        Objects.requireNonNull(estudiantes, "La lista de estudiantes es obligatoria.");
+        if (estudiantes.isEmpty()) {
+            throw new IllegalArgumentException("La clase debe tener al menos un estudiante.");
+        }
         this.estudiantes = new ArrayList<>();
+        estudiantes.forEach(this::agregarEstudiante);
     }
 
     public String getNombre() {

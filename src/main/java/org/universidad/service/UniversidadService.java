@@ -122,11 +122,18 @@ public final class UniversidadService {
             List<Estudiante> estudiantes) {
         Profesor profesorRegistrado = validarProfesorRegistrado(profesor);
         Objects.requireNonNull(estudiantes, "La lista de estudiantes es obligatoria.");
-
-        ClaseUniversitaria clase = new ClaseUniversitaria(nombre, aulaAsignada, profesorRegistrado);
-        for (Estudiante estudiante : estudiantes) {
-            clase.agregarEstudiante(validarEstudianteRegistrado(estudiante));
+        if (estudiantes.isEmpty()) {
+            throw new IllegalArgumentException("La clase debe tener al menos un estudiante.");
         }
+
+        List<Estudiante> estudiantesRegistrados = estudiantes.stream()
+                .map(this::validarEstudianteRegistrado)
+                .toList();
+        ClaseUniversitaria clase = new ClaseUniversitaria(
+                nombre,
+                aulaAsignada,
+                profesorRegistrado,
+                estudiantesRegistrados);
         registrarClase(clase);
         return clase;
     }
