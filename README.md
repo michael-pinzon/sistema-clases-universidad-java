@@ -24,18 +24,54 @@ Aplicación de consola para administrar profesores, estudiantes y clases univers
 
 ## Requisitos
 
-- JDK 21 configurado en `JAVA_HOME`.
-- Git para el control de versiones.
+- JDK 21 o superior. Puede seleccionarse como SDK del proyecto en IntelliJ IDEA.
+- Git para el control de versiones, si el proyecto se va a clonar desde GitHub.
+- Maven no es necesario: el proyecto incluye Maven Wrapper.
 
-## Ejecución
+La ejecución desde IntelliJ IDEA utiliza el JDK seleccionado para el proyecto y no requiere
+que Java esté configurado globalmente en el `PATH`. Para ejecutar Maven desde una terminal
+externa, el JDK debe estar disponible mediante `JAVA_HOME` o `PATH`.
 
-Desde Windows PowerShell:
+Para verificar la versión de Java:
 
 ```powershell
-.\mvnw.cmd clean test
+java -version
 ```
 
+Maven valida automáticamente que el JDK sea 21 o superior antes de compilar. Si se detecta
+una versión anterior, la ejecución se detiene con un mensaje indicando cómo seleccionar o
+configurar el JDK correcto.
+
+## Ejecución de la aplicación
+
 La clase de entrada es `org.universidad.app.Main`.
+
+### Desde Windows PowerShell
+
+Ejecutar desde la carpeta raíz del proyecto:
+
+```powershell
+.\mvnw.cmd compile
+java -cp target\classes org.universidad.app.Main
+```
+
+### Desde macOS o Linux
+
+Ejecutar desde la carpeta raíz del proyecto:
+
+```bash
+./mvnw compile
+java -cp target/classes org.universidad.app.Main
+```
+
+### Desde IntelliJ IDEA
+
+1. Abrir la carpeta raíz del proyecto.
+2. Confirmar que el proyecto utiliza un JDK 21.
+3. Abrir `src/main/java/org/universidad/app/Main.java`.
+4. Ejecutar el método `main` mediante el botón verde de IntelliJ IDEA.
+
+La aplicación mostrará el menú principal y esperará la selección de una opción.
 
 ## Organización del código
 
@@ -55,9 +91,21 @@ La clase de entrada es `org.universidad.app.Main`.
 
 ## Pruebas
 
+Para compilar el proyecto y ejecutar las pruebas automatizadas:
+
+### Windows PowerShell
+
 ```powershell
-.\mvnw.cmd test
+.\mvnw.cmd clean test
 ```
+
+### macOS o Linux
+
+```bash
+./mvnw clean test
+```
+
+Este comando ejecuta las pruebas, pero no inicia el menú de la aplicación.
 
 ## Diagrama de diseño
 
